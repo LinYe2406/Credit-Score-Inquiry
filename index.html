@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>信用分查询</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(30, 30, 30, 0.8);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(255, 0, 100, 0.5);
+            border: 3px solid #ff0066;
+            position: relative;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .title {
+            font-size: 32px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #ff0066;
+            animation: glow 1.5s ease-in-out infinite alternate;
+        }
+        
+        .score-display {
+            font-size: 100px;
+            font-weight: 900;
+            margin: 20px 0;
+            text-shadow: 0 0 20px currentColor;
+            transition: all 0.5s;
+        }
+        
+        .rating {
+            font-size: 28px;
+            margin-bottom: 10px;
+            height: 40px;
+        }
+        
+        .description {
+            font-size: 18px;
+            margin-bottom: 30px;
+            min-height: 60px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+        
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 15px 0;
+            border-radius: 15px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(255, 0, 100, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(255, 0, 100, 0.8);
+        }
+        
+        .action-btn::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, #ff0066, #ff00cc, #0066ff, #00ccff, #ff0066);
+            background-size: 400%;
+            z-index: -1;
+            border-radius: 20px;
+            animation: gradient 5s linear infinite;
+            filter: blur(10px);
+            opacity: 0.8;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #aaa;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 5px #ff0066, 0 0 10px #ff0066; }
+            to { text-shadow: 0 0 15px #ff0066, 0 0 30px #ff0066; }
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); }
+            60% { transform: translateX(-10px); }
+            80% { transform: translateX(10px); }
+            100% { transform: translateX(0); }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+        
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        .float {
+            animation: float 2s ease-in-out infinite;
+        }
+        
+        .glitch {
+            position: relative;
+        }
+        
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch::before {
+            left: 2px;
+            text-shadow: -1px 0 red;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+        
+        .glitch::after {
+            left: -2px;
+            text-shadow: -1px 0 blue;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+        
+        @keyframes glitch-anim {
+            0% { clip: rect(35px, 9999px, 45px, 0); }
+            10% { clip: rect(25px, 9999px, 75px, 0); }
+            20% { clip: rect(50px, 9999px, 99px, 0); }
+            30% { clip: rect(30px, 9999px, 85px, 0); }
+            40% { clip: rect(40px, 9999px, 73px, 0); }
+            50% { clip: rect(60px, 9999px, 99px, 0); }
+            60% { clip: rect(10px, 9999px, 68px, 0); }
+            70% { clip: rect(50px, 9999px, 103px, 0); }
+            80% { clip: rect(40px, 9999px, 83px, 0); }
+            90% { clip: rect(70px, 9999px, 99px, 0); }
+            100% { clip: rect(10px, 9999px, 9px, 0); }
+        }
+        
+        @keyframes glitch-anim2 {
+            0% { clip: rect(65px, 9999px, 99px, 0); }
+            10% { clip: rect(45px, 9999px, 74px, 0); }
+            20% { clip: rect(60px, 9999px, 98px, 0); }
+            30% { clip: rect(10px, 9999px, 20px, 0); }
+            40% { clip: rect(40px, 9999px, 73px, 0); }
+            50% { clip: rect(60px, 9999px, 87px, 0); }
+            60% { clip: rect(10px, 9999px, 98px, 0); }
+            70% { clip: rect(40px, 9999px, 103px, 0); }
+            80% { clip: rect(80px, 9999px, 99px, 0); }
+            90% { clip: rect(0px, 9999px, 83px, 0); }
+            100% { clip: rect(60px, 9999px, 99px, 0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title glitch" data-text="抽象信用分模拟器">抽象信用分模拟器</h1>
+        
+        <div class="score-display" id="creditScore">-</div>
+        
+        <div class="rating" id="rating"></div>
+        
+        <div class="description" id="description">
+            正在评估您的抽象程度...
+        </div>
+        
+        <button class="action-btn" id="actionBtn" style="background: linear-gradient(45deg, #ff0066, #cc00ff);">
+            <div class="float">初始化信用评估</div>
+        </button>
+        
+        <div class="footer">
+            系统随机生成结果 | 仅供娱乐 | 切勿当真 | 危险动作请勿模仿
+        </div>
+    </div>
+    
+    <script>
+        // 沙雕信用评级系统
+        const scoreLevels = [
+            { 
+                min: 0, max: 49, 
+                rating: "人形不可燃垃圾", 
+                description: "系统检测到您的存在会降低宇宙熵值，建议立即量子纠缠分解",
+                btnText: "预约量子分解",
+                btnColor: "linear-gradient(45deg, #8b0000, #000000)",
+                scoreColor: "#ff0000"
+            },
+            { 
+                min: 50, max: 99, 
+                rating: "碳基排泄物", 
+                description: "您的分子结构已被标记为有害物质，大气层将对您启动净化协议",
+                btnText: "自费购买净化套餐",
+                btnColor: "linear-gradient(45deg, #ff4500, #8b0000)",
+                scoreColor: "#ff3300"
+            },
+            { 
+                min: 100, max: 199, 
+                rating: "低熵体威胁", 
+                description: "检测到您的思想会对宇宙背景辐射产生干扰，系统将发放思想屏蔽头盔",
+                btnText: "领取思想屏蔽头盔",
+                btnColor: "linear-gradient(45deg, #ff6347, #ff4500)",
+                scoreColor: "#ff6600"
+            },
+            { 
+                min: 200, max: 299, 
+                rating: "类人型生物", 
+                description: "系统无法完全确认您的生物属性，将发送外星生物鉴定专家进行实地考察",
+                btnText: "预约外星鉴定",
+                btnColor: "linear-gradient(45deg, #ff8c00, #ff6347)",
+                scoreColor: "#ff9933"
+            },
+            { 
+                min: 300, max: 399, 
+                rating: "可回收资源", 
+                description: "您的原子构成达到工业标准，系统已安排回收机器人前往采集",
+                btnText: "签署回收协议",
+                btnColor: "linear-gradient(45deg, #ffa500, #ff8c00)",
+                scoreColor: "#ffcc00"
+            },
+            { 
+                min: 400, max: 499, 
+                rating: "民用级碳基体", 
+                description: "已确认您的基本碳基属性，但存在认知缺陷风险，系统提供有偿智商充值服务",
+                btnText: "智商充值 (限时9折)",
+                btnColor: "linear-gradient(45deg, #f0e68c, #ffa500)",
+                scoreColor: "#ffff00"
+            },
+            { 
+                min: 500, max: 599, 
+                rating: "普通人类样本", 
+                description: "系统验证您属于标准智人亚种，但建议使用元宇宙升级补丁提升认知水平",
+                btnText: "购买元宇宙认知升级",
+                btnColor: "linear-gradient(45deg, #adff2f, #f0e68c)",
+                scoreColor: "#ccff00"
+            },
+            { 
+                min: 600, max: 699, 
+                rating: "高等类人猿", 
+                description: "检测到您的脑电波存在局部进化特征，系统建议您尽快进行星际移民",
+                btnText: "申请星际移民资格",
+                btnColor: "linear-gradient(45deg, #7cfc00, #adff2f)",
+                scoreColor: "#66ff00"
+            },
+            { 
+                min: 700, max: 799, 
+                rating: "未完全体超人", 
+                description: "您已接近打破三维空间限制，但急需充值超级英雄会员套餐才能激活全部能力",
+                btnText: "购买超人套餐VIP",
+                btnColor: "linear-gradient(45deg, #00ff7f, #7cfc00)",
+                scoreColor: "#00ff00"
+            },
+            { 
+                min: 800, max: 899, 
+                rating: "宇宙观察者", 
+                description: "您的认知维度已超越本宇宙常数，系统授予您重新格式化物理法则的权限",
+                btnText: "下载物理法则编辑器",
+                btnColor: "linear-gradient(45deg, #00bfff, #00ff7f)",
+                scoreColor: "#00ffff"
+            },
+            { 
+                min: 900, max: 999, 
+                rating: "形而上学实体", 
+                description: "系统在递归函数极限处检测到您的存在，请接收这束来自高维的光荣",
+                btnText: "领取宇宙管理员证书",
+                btnColor: "linear-gradient(45deg, #9370db, #00bfff)",
+                scoreColor: "#ff00ff"
+            },
+            { 
+                min: 1000, max: 1000, 
+                rating: "抽象概念本身", 
+                description: "系统检测到您处于存在与非存在的叠加态，正在尝试用非欧几何重新定义您",
+                btnText: "升级为数学公理",
+                btnColor: "linear-gradient(45deg, #ff00ff, #ff69b4)",
+                scoreColor: "#ffffff"
+            }
+        ];
+
+        // 生成更加极端的信用分分布
+        function generateCreditScore() {
+            // 10% 概率获得超低分 (0-99)
+            // 30% 概率获得低分 (100-299)
+            // 40% 概率获得中等分 (300-599)
+            // 15% 概率获得较高分 (600-799)
+            // 4.9% 概率获得高分 (800-999)
+            // 0.1% 概率获得满分神迹 (1000)
+            
+            const rand = Math.random();
+            
+            if (rand < 0.001) {
+                return 1000; // 神级分数
+            } else if (rand < 0.05) {
+                return 800 + Math.floor(Math.random() * 200); // 高分
+            } else if (rand < 0.20) {
+                return 600 + Math.floor(Math.random() * 200); // 较高分
+            } else if (rand < 0.60) {
+                return 300 + Math.floor(Math.random() * 300); // 中等分
+            } else if (rand < 0.90) {
+                return 100 + Math.floor(Math.random() * 200); // 低分
+            } else {
+                return Math.floor(Math.random() * 100); // 超低分
+            }
+        }
+
+        // 显示信用分数和评价
+        function displayCreditInfo() {
+            const score = generateCreditScore();
+            const scoreElement = document.getElementById('creditScore');
+            const ratingElement = document.getElementById('rating');
+            const descriptionElement = document.getElementById('description');
+            const actionBtn = document.getElementById('actionBtn');
+            
+            // 重置动画类
+            scoreElement.className = 'score-display';
+            
+            // 查找匹配的评价等级
+            const level = scoreLevels.find(l => score >= l.min && score <= l.max);
+            
+            if (level) {
+                scoreElement.textContent = score;
+                scoreElement.style.color = level.scoreColor;
+                ratingElement.textContent = level.rating;
+                descriptionElement.textContent = level.description;
+                actionBtn.innerHTML = `<div class="float">${level.btnText}</div>`;
+                actionBtn.style.background = level.btnColor;
+                
+                // 为低分添加抖动效果
+                if (score <= 199) {
+                    scoreElement.classList.add('shake');
+                }
+                
+                // 为高分添加浮动效果
+                if (score >= 800) {
+                    ratingElement.classList.add('float');
+                }
+            }
+        }
+
+        // 初始化按钮功能
+        document.getElementById('actionBtn').addEventListener('click', function() {
+            // 添加点击动画效果
+            this.classList.add('shake');
+            setTimeout(() => this.classList.remove('shake'), 500);
+            
+            // 显示新的信用分
+            displayCreditInfo();
+        });
+
+        // 首次加载时显示初始界面
+        window.addEventListener('load', function() {
+            setTimeout(displayCreditInfo, 1000);
+        });
+    </script>
+</body>
+</html>
